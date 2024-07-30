@@ -23,11 +23,14 @@ const dailyGoal = 8000;
 
 const HomeScreen = () => {
   const [userData, setUserData] = useState(userjson);
+  const [insurance_amount,setAmount] = useState(500);
+  const [discount,setDiscount] = useState(0);
+  const [dueDate,setDueDate]=useState("25/04/2024")
 
   const postData = async () => {
     try {
       const response = await axios.post(
-        "https://dummyjson.com/posts/add",
+        "http://192.168.184.161:8080/fitness-data/",
         userData,
         {
           headers: {
@@ -40,6 +43,20 @@ const HomeScreen = () => {
       console.error("Error posting data:", error);
     }
   };
+
+  const fetchData = async () => {
+    try {
+      axios.get("http://192.168.184.161:8080/getInsuranceValue").then((response) => {setAmount(response.data["amount"]);setDueDate(response.data["due_date"]);setDiscount((response.data["discount"]*100).toFixed(0)-1)})
+    }catch (error)
+    {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+}, [])
+
 
   useEffect(() => {
     const onEvent = async (taskId) => {
@@ -111,10 +128,11 @@ const HomeScreen = () => {
 
       <View style={styles.insuranceContainer}>
         <Text style={styles.insuranceText}>Insurance Premium:</Text>
-        <Text style={styles.insuranceAmount}>£25</Text>
-        <Text style={styles.insuranceDate}>Due Date 30/07/2024</Text>
+        <Text style={styles.insuranceAmount}>₹{insurance_amount}</Text>
+        <Text style={styles.insuranceDate}>Discount: {discount} %</Text>
+        <Text style={styles.insuranceDate}>Due Date {dueDate}</Text>
         <TouchableOpacity style={styles.payNowButton}>
-          <Text style={styles.payNowText}>Pay Now</Text>
+          <Text style={styles.payNowText} onPress={() => handlePress(`upi://pay?pa=insurance@testbank&pn=LifeInsurance&tn=InsurancePremium&am=${insurance_amount}&cu=INR`)} >Pay Now</Text>
         </TouchableOpacity>
       </View>
 

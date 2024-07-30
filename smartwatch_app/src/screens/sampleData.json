@@ -1,7 +1,8 @@
 {
-    "userName":"Jhon",
-    "stepCount": 5000,
-    "heartRate": 96,
-    "spO2":98
+    "userName":"Jane Doe",
+    "stepCount": 500,
+    "heartRate": 84,
+    "spO2":98,
+    "Date":"20240730"
 }
 
